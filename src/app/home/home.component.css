@@ -1,1 +1,9 @@
 /*styles for home content only*/
+
+.has-error {
+  border: 1px solid red;
+}
+
+.has-success {
+  border: 1px solid green;
+}
