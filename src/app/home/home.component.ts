@@ -36,6 +36,8 @@ export class HomeComponent implements OnInit {
   public form:FormGroup;
   public email:AbstractControl;
   public first_name:AbstractControl;
+  public editMode: boolean = false;
+  public isHidden: boolean = false;
 
   // TypeScript public modifiers
   constructor(
@@ -62,6 +64,20 @@ export class HomeComponent implements OnInit {
       {email: 'test1@test.com',first_name: 'rav', last_name: 'test2',id: 2},
       {email: 'test1zz@test.com',first_name: 'ravzz', last_name: 'testzz2',id: 2}
     ];
+  }
+
+  public edit():void {
+    this.editMode = true;
+  }
+
+  public save():void {
+    this.editMode = false;
+  }
+
+  public delete(id):void {
+    // this.isHidden = true;
+    this.users.splice(id,1)
+    this.form.reset();
   }
 
   public DoCheck() {

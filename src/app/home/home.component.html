@@ -49,15 +49,29 @@
         <tbody>
           <tr *ngFor="let user of users">
             <td>
-                <span>{{user.first_name}}</span></td>
-            <td>{{user.email}}</td>
+              <span *ngIf="!editMode">{{user.first_name}}</span>
+              <span *ngIf="editMode">
+                <input [(ngModel)]="user.first_name">
+              </span>
+            </td>
             <td>
-              <a class="btn btn-sm btn-info" (click)="toggleModal(user)"> Edit</a>
+              <span *ngIf="!editMode">{{user.email}}</span>
+              <span *ngIf="editMode">
+                <input [(ngModel)]="user.email">
+              </span>
+            </td>
+            <td>
               <a class="btn btn-sm btn-default" (click)="delete(user.id)"> Delete</a>
             </td>
           </tr>
         </tbody>
       </table>
+      <span *ngIf="!editMode">
+      <a class="btn btn-sm btn-info" (click)="edit()"> Edit</a>
+      </span>
+      <span *ngIf="editMode">
+        <a class="btn btn-sm btn-info" (click)="save()"> Save</a>
+      </span>
     <!--
         <input type="text" [value]="localState.value" (input)="localState.value = $event.target.value" autofocus>
         Rather than wiring up two-way data-binding ourselves with [value] and (input)
