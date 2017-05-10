@@ -47,7 +47,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of users">
+          <tr *ngFor="let user of users | paginate: { itemsPerPage: 2, currentPage: p}">
             <td>
               <span *ngIf="!editMode">{{user.first_name}}</span>
               <span *ngIf="editMode">
@@ -72,6 +72,8 @@
       <span *ngIf="editMode">
         <a class="btn btn-sm btn-info" (click)="save()"> Save</a>
       </span>
+
+<pagination-controls (pageChange)="p = $event"></pagination-controls>
     <!--
         <input type="text" [value]="localState.value" (input)="localState.value = $event.target.value" autofocus>
         Rather than wiring up two-way data-binding ourselves with [value] and (input)
