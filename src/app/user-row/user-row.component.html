@@ -1,0 +1,53 @@
+                <table>
+        <thead>
+          <tr>
+            <th class="sortable">First Name</th>
+            <th class="sortable">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of pagedUsers">
+            <td>
+              <span *ngIf="!editMode">{{user.first_name}}</span>
+              <span *ngIf="editMode">
+                <input [(ngModel)]="user.first_name">
+              </span>
+            </td>
+            <td>
+              <span *ngIf="!editMode">{{user.email}}</span>
+              <span *ngIf="editMode">
+                <input [(ngModel)]="user.email">
+              </span>
+            </td>
+            <td>
+              <a class="btn btn-sm btn-default" (click)="delete(user.id)"> Delete</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+                <span *ngIf="!editMode">
+      <a class="btn btn-sm btn-info" (click)="edit()"> Edit</a>
+      </span>
+      <span *ngIf="editMode">
+        <a class="btn btn-sm btn-info" (click)="save()"> Save</a>
+      </span>
+
+                      <!-- pager -->
+            <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a (click)="setPage(1)">First</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+                </li>
+                <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                    <a (click)="setPage(page)">{{page}}</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a (click)="setPage(pager.currentPage + 1)">Next</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a (click)="setPage(pager.totalPages)">Last</a>
+                </li>
+            </ul>

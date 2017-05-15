@@ -38,42 +38,7 @@
 
         <button type="submit" type="submit" [disabled]="!form.valid">Submit</button>
       </form>
-
-      <table>
-        <thead>
-          <tr>
-            <th class="sortable">First Name</th>
-            <th class="sortable">Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users | paginate: { itemsPerPage: 2, currentPage: p}">
-            <td>
-              <span *ngIf="!editMode">{{user.first_name}}</span>
-              <span *ngIf="editMode">
-                <input [(ngModel)]="user.first_name">
-              </span>
-            </td>
-            <td>
-              <span *ngIf="!editMode">{{user.email}}</span>
-              <span *ngIf="editMode">
-                <input [(ngModel)]="user.email">
-              </span>
-            </td>
-            <td>
-              <a class="btn btn-sm btn-default" (click)="delete(user.id)"> Delete</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <span *ngIf="!editMode">
-      <a class="btn btn-sm btn-info" (click)="edit()"> Edit</a>
-      </span>
-      <span *ngIf="editMode">
-        <a class="btn btn-sm btn-info" (click)="save()"> Save</a>
-      </span>
-
-<pagination-controls (pageChange)="p = $event"></pagination-controls>
+          <user-row></user-row>
     <!--
         <input type="text" [value]="localState.value" (input)="localState.value = $event.target.value" autofocus>
         Rather than wiring up two-way data-binding ourselves with [value] and (input)
