@@ -1,7 +1,9 @@
 import {
   Component,
   OnInit,
-  DoCheck
+  DoCheck,
+  ApplicationRef,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { AppState } from '../app.service';
@@ -15,6 +17,7 @@ import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/throttleTime';
 import 'rxjs/add/observable/fromEvent';
+import {PageService} from '../services/pagination.service';
 
 import {Pipe, PipeTransform} from '@angular/core';
 import * as _ from 'underscore';
@@ -25,21 +28,20 @@ import {UserRowComponent} from '../user-row/user-row.component';
   // The selector is what angular internally uses
   // for `document.querySelectorAll(selector)` in our index.html
   // where, in this case, selector is the string 'home'
-  selector: 'home',  // <home></home>
+  selector: 'home',
+   // <home></home>
   // We need to tell Angular's Dependency Injection which providers are in our app.
   providers: [
     Title,
-    FormBuilder
+    FormBuilder,
+    PageService
   ],
   // Our list of styles in our component. We may add more to compose many styles together
   styleUrls: [ './home.component.css' ],
   // Every Angular template is first ,compiled by the browser before Angular runs it's compiler
-  templateUrl: './home.component.html'
+  templateUrl: './home.component.html',
 })
 
-@Pipe({
-  name: 'filter'
-})
 export class HomeComponent implements OnInit {
   // Set our default values
   public localState = { value: 'zzz' };
@@ -51,11 +53,14 @@ export class HomeComponent implements OnInit {
   public email: AbstractControl;
   public first_name: AbstractControl;
   public isHidden: boolean = false;
+  public pager: any = {};
+  public pagedUsers: any[];
 
   // TypeScript public modifiers
   constructor(
     public appState: AppState,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private pagerService: PageService
     ) {
 
     this.form = fb.group({
@@ -68,24 +73,24 @@ export class HomeComponent implements OnInit {
 
   public ngOnInit() {
     console.log('hello `Home` component');
-    this.getUsers();
     this.newUser = {first_name: '', last_name: ''};
+    this.setPage(1);
   }
 
   public getUsers() {
     this.users = [
-      {email: 'test@test.com',first_name: 'test', last_name: 'test1', id: 1},
-      {email: 'test1@test.com',first_name: 'rav', last_name: 'test2',id: 2},
-      {email: 'test1zz@test.com',first_name: 'ravzz', last_name: 'testzz2',id: 3},
-      {email: 'test@test.com',first_name: 'test', last_name: 'test1', id: 4},
-      {email: 'test1@test.com',first_name: 'rav', last_name: 'test2',id: 5},
-      {email: 'test1zz@test.com',first_name: 'ravzz', last_name: 'testzz2',id: 6},
-      {email: 'test@test.com',first_name: 'test', last_name: 'test1', id: 7},
-      {email: 'test1@test.com',first_name: 'rav', last_name: 'test2',id: 8},
-      {email: 'test1zz@test.com',first_name: 'ravzz', last_name: 'testzz2',id: 9},
-      {email: 'test@test.com',first_name: 'test', last_name: 'test1', id: 10},
-      {email: 'test1@test.com',first_name: 'rav', last_name: 'test2',id: 11},
-      {email: 'test1zz@test.com',first_name: 'ravzzsdsaa', last_name: 'testzz2',id: 12},
+      {email: 'test@test.com',first_name: 'one', last_name: 'test1', id: 1},
+      {email: 'test1@test.com',first_name: 'two', last_name: 'test2',id: 2},
+      {email: 'test1zz@test.com',first_name: 'three', last_name: 'testzz2',id: 3},
+      {email: 'test@test.com',first_name: 'four', last_name: 'test1', id: 4},
+      {email: 'test1@test.com',first_name: 'five', last_name: 'test2',id: 5},
+      {email: 'test1zz@test.com',first_name: 'six', last_name: 'testzz2',id: 6},
+      {email: 'test@test.com',first_name: 'seven', last_name: 'test1', id: 7},
+      {email: 'test1@test.com',first_name: 'eight', last_name: 'test2',id: 8},
+      {email: 'test1zz@test.com',first_name: 'nine', last_name: 'testzz2',id: 9},
+      {email: 'test@test.com',first_name: 'ten', last_name: 'test1', id: 10},
+      {email: 'test1@test.com',first_name: 'eleven', last_name: 'test2',id: 11},
+      {email: 'test1zz@test.com',first_name: 'twelve', last_name: 'testzz2',id: 12},
     ];
 
     return this.users;
@@ -101,30 +106,16 @@ export class HomeComponent implements OnInit {
     this.form.reset();
   }
 
-  public userFilter():void {
-        transform(items: any, filter: any): any {
-      if (filter && Array.isArray(items)) {
-          let filterKeys = Object.keys(filter);
-          return items.filter(item =>
-              filterKeys.reduce((memo, keyName) =>
-                  (memo && new RegExp(filter[keyName], 'gi').test(item[keyName])) || filter[keyName] === "", true));
-      } else {
-          return items;
-      }
-    }
-  }
+  public setPage(page: number) {
+    if (page < 1 || page > this.pager.totalPages) {
+            return;
+        }
 
-}
+        // get pager object from service
+        this.pager = this.pagerService.getPager(this.users.length, page);
 
-export class FilterPipe implements PipeTransform {
-    transform(items: any, filter: any): any {
-      if (filter && Array.isArray()) {
-          let filterKeys = Object.keys(filter);
-          return items.filter(item =>
-              filterKeys.reduce((memo, keyName) =>
-                  (memo && new RegExp(filter[keyName], 'gi').test(item[keyName])) || filter[keyName] === "", true));
-      } else {
-          return items;
-      }
+        // get current page of items
+        this.pagedUsers = this.users.slice(this.pager.startIndex, this.pager.endIndex + 1);
+        return this.pager, this.pagedUsers;
     }
 }

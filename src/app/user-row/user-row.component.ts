@@ -1,33 +1,31 @@
-import {
-  Component,
-  OnInit,
-  DoCheck
-} from '@angular/core';
-
 import { HomeComponent } from '../home/home.component';
-import {PageService} from '../services/pagination.service';
+import { FilteredList } from '../filter/filteredList.component';
+
+import {Component,Input,Output,OnInit,ViewChild,EventEmitter,ChangeDetectionStrategy} from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
+import {Observable} from 'rxjs/Rx';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/throttleTime';
+import 'rxjs/add/observable/fromEvent';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import { FilterPipe } from '../filter/filter.pipe'
 
 @Component({
-    selector: 'user-row',
+    selector: '[user-row]',
     templateUrl: './user-row.component.html',
-    providers: [ PageService ] 
 })
 
-export class UserRowComponent implements OnInit {
+export class UserRowComponent {
 
-  public users: any[];
+  public users: Array<any>;
   public editMode: boolean = false;
-  public pager: any = {};
-  public pagedUsers: any[];
+  @Input() public pagedUsers: any[];
 
   constructor(
-    private home: HomeComponent,
-    private pagerService: PageService) {
+    private home: HomeComponent) {
     this.users = home.getUsers();
-  }
-
-  public ngOnInit() {
-    this.setPage(1);
   }
 
   public edit():void {
@@ -41,17 +39,4 @@ export class UserRowComponent implements OnInit {
   public delete(id):void {
     this.pagedUsers.splice(id,1)
   }
-
-  public setPage(page: number) {
-    if (page < 1 || page > this.pager.totalPages) {
-            return;
-        }
-
-        // get pager object from service
-        this.pager = this.pagerService.getPager(this.users.length, page);
-
-        // get current page of items
-        this.pagedUsers = this.users.slice(this.pager.startIndex, this.pager.endIndex + 1);
-        
-    }
 }

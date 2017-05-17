@@ -37,6 +37,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { PageService } from './services';
 
 import { UserRowComponent } from './user-row';
+import { FilterPipe } from './filter'
+
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -61,7 +63,8 @@ type StoreType = {
     HomeComponent,
     NoContentComponent,
     XLargeDirective,
-    UserRowComponent
+    UserRowComponent,
+    FilterPipe
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -74,7 +77,7 @@ type StoreType = {
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
-    PageService
+    PageService,
   ]
 })
 export class AppModule {
